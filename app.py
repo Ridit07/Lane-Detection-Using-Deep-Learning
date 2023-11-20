@@ -198,7 +198,7 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file).convert('RGB')
     image.save("temp.jpg")  # Save the uploaded image to process
     original_img, image_tensor = process_image("temp.jpg")
-    
+    labels = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255)] 
     # Predict
     result_image = predict(model, image_tensor, original_img, labels)
 
