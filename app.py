@@ -216,8 +216,8 @@ def create_video_from_frames(frame_folder, output_video_path, fps=30):
 model = load_model('model_state_dict.pth')
 
 # Streamlit webpage layout
-st.title("Lane Detection App")
-st.write("Upload an image to detect lanes.")
+st.title("Lane Detection System")
+st.write("Upload an image or video to detect lanes.")
 
 # File uploader
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
