@@ -209,7 +209,6 @@ def create_video_from_frames(frame_folder, output_video_path, fps=30):
     for frame_path in frame_paths:
         video.write(cv2.imread(frame_path))
 
-    cv2.destroyAllWindows()
     video.release()
 
 
