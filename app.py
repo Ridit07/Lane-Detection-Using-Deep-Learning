@@ -262,4 +262,11 @@ if uploaded_video is not None:
         create_video_from_frames(temp_folder, output_video_path)
 
         # Display or offer download of the video
-        st.video(output_video_path)
+        if os.path.exists(output_video_path):
+            with open(output_video_path, "rb") as file:
+                st.download_button(
+                    label="Download Processed Video",
+                    data=file,
+                    file_name="processed_video.mp4",
+                    mime="video/mp4"
+        )
