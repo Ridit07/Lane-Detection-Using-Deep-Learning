@@ -8,6 +8,9 @@ from PIL import Image
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
+import tempfile
+import os
+
 
 class SCNN(nn.Module):
     def __init__(self , input_size , massage_kernel = 9 , pretrained=True):
@@ -182,6 +185,33 @@ def predict(model, image_tensor, original_image, labels):
     overlay_image = overlay_lane_markings(original_image, lane_markings)
     return overlay_image
 
+def extract_frames(video_path, temp_folder):
+    vidcap = cv2.VideoCapture(video_path)
+    success, image = vidcap.read()
+    count = 0
+    while success:
+        cv2.imwrite(os.path.join(temp_folder, f"frame{count:05d}.jpg"), image)     
+        success, image = vidcap.read()
+        count += 1
+    vidcap.release()
+    return count  # Return the number of extracted frames
+
+def create_video_from_frames(frame_folder, output_video_path, fps=30):
+    frame_paths = sorted([os.path.join(frame_folder, f) for f in os.listdir(frame_folder) if f.endswith('.jpg')])
+    if not frame_paths:
+        return
+    
+    # Read the first frame to determine the size
+    frame = cv2.imread(frame_paths[0])
+    height, width, layers = frame.shape
+    video = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+
+    for frame_path in frame_paths:
+        video.write(cv2.imread(frame_path))
+
+    cv2.destroyAllWindows()
+    video.release()
+
 
 # Load your model outside of the main loop to avoid reloading on every interaction
 model = load_model('model_state_dict.pth')
@@ -204,3 +234,33 @@ if uploaded_file is not None:
 
     # Display the image
     st.image(result_image, caption='Processed Image', use_column_width=True)
+
+
+
+uploaded_video = st.file_uploader("Choose a video...", type=["mp4", "avi"], key="video_uploader")
+
+if uploaded_video is not None:
+    with tempfile.TemporaryDirectory() as temp_folder:
+        # Save the uploaded video
+        video_path = os.path.join(temp_folder, "uploaded_video.mp4")
+        with open(video_path, "wb") as f:
+            f.write(uploaded_video.read())
+
+        # Extract frames
+        extract_frames(video_path, temp_folder)
+
+        # Process each frame
+        for frame_file in sorted(os.listdir(temp_folder)):
+            if frame_file.endswith('.jpg'):
+                frame_path = os.path.join(temp_folder, frame_file)
+                original_img, image_tensor = process_image(frame_path)
+                labels = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255)] 
+                result_image = predict(model, image_tensor, original_img, labels)
+                cv2.imwrite(frame_path, cv2.cvtColor(result_image, cv2.COLOR_RGB2BGR))
+
+        # Recombine frames into a video
+        output_video_path = "processed_video.mp4"
+        create_video_from_frames(temp_folder, output_video_path)
+
+        # Display or offer download of the video
+        st.video(output_video_path)
