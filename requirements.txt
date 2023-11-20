@@ -1,0 +1,6 @@
+streamlit==1.10.0  # Adjust the version according to your compatibility needs
+opencv-python-headless==4.5.5.62  # Use opencv-python-headless for server environments or opencv-python for local environments
+torch==1.10.0  # Specify the version you're using, ensuring compatibility with torchvision
+torchvision==0.11.1  # Ensure this is compatible with your PyTorch version
+Pillow==8.4.0  # The latest version as of my last training data, adjust as needed
+numpy==1.21.4  # Specify the version that is compatible with your other libraries
