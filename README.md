@@ -7,7 +7,7 @@ The primary aim is to assist **Advanced Driver Assistance Systems (ADAS)** by pr
 ## 🖼 Demo Results
 | Detected Lane Example 1 | Detected Lane Example 2 |
 |-------------------------|-------------------------|
-| ![Lane Detection Result 1](demo_images/image1.png) | ![Lane Detection Result 2](demo_images/image2.png) |
+| ![Lane Detection Result 1](demo_image/image1.png) | ![Lane Detection Result 2](demo_image/image2.png) |
 
 ## ⚙ How It Works
 1. **Data Acquisition** – Lane detection datasets with annotated lane markings were used.
